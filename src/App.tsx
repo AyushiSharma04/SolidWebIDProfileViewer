@@ -7,7 +7,11 @@ const FOAF = $rdf.Namespace("http://xmlns.com/foaf/0.1/");
 const VCARD = $rdf.Namespace("http://www.w3.org/2006/vcard/ns#");
 const RDFS = $rdf.Namespace("http://www.w3.org/2000/01/rdf-schema#");
 
-const nodeToString = (term: $rdf.Term | null | undefined) => {
+type TermLike = {
+  termType: string;
+  value: string;
+};
+const nodeToString = (term: TermLike | null | undefined) => {
   if (!term) return undefined;
   if (term.termType === "Literal") return (term as $rdf.Literal).value;
   if (term.termType === "NamedNode") return (term as $rdf.NamedNode).value;
@@ -15,7 +19,7 @@ const nodeToString = (term: $rdf.Term | null | undefined) => {
 };
 
 function extractName(store: $rdf.IndexedFormula, subj: $rdf.NamedNode) {
-  const candidates: ($rdf.Term | null)[] = [
+  const candidates: (TermLike | null)[] = [
     store.any(subj, FOAF("name")),
     store.any(subj, VCARD("fn")),
     store.any(subj, FOAF("givenName")),
@@ -26,7 +30,7 @@ function extractName(store: $rdf.IndexedFormula, subj: $rdf.NamedNode) {
 }
 
 function extractImage(store: $rdf.IndexedFormula, subj: $rdf.NamedNode) {
-  const candidates: ($rdf.Term | null)[] = [
+  const candidates: (TermLike | null)[] = [
     store.any(subj, FOAF("img")),
     store.any(subj, FOAF("depiction")),
     store.any(subj, VCARD("hasPhoto")),
